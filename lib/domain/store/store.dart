@@ -1,13 +1,30 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/util/event.dart';
 
 //todo: make it singleton?
-class Store {
+
+abstract class Store {
+  factory Store({List<BaseState> states, List<Middleware> middleWares = const <Middleware>[]}) =>
+      _StoreImpl(states: states, middleWares: middleWares);
+
+  Stream<ST> nextState<ST>();
+
+  ST getState<ST extends BaseState>();
+
+  void dispatchEvent<ST extends BaseState>({@required Event<ST> event});
+
+  Stream<Event> get eventStream;
+}
+
+class _StoreImpl implements Store {
   // ignore: close_sinks
   StreamController<Event> _dispatcher;
+
+  @override
   Stream<Event> get eventStream => _dispatcher.stream;
 
   final List<BaseState> states;
@@ -17,13 +34,11 @@ class Store {
 
   void _initStore() => _dispatcher = StreamController<Event>.broadcast();
 
-  void initMiddleware() => middleWares.forEach((middleware) {
-        middleware.store = this;
-      });
+  void _initMiddleware() => middleWares.forEach((middleware) => middleware.store = this);
 
-  Store({@required this.states, this.middleWares = const <Middleware>[]}) {
+  _StoreImpl({@required this.states, this.middleWares = const <Middleware>[]}) {
     _initStore();
-    if (middleWares.isNotEmpty) initMiddleware();
+    if (middleWares.isNotEmpty) _initMiddleware();
 
     _dispatcher.stream.listen((event) {
       for (Middleware middleware in middleWares) {
@@ -39,12 +54,14 @@ class Store {
       if (lastKnownHashCode != targetState.hashCode) targetState.update();
     });
   }
-
+  @override
   Stream<ST> nextState<ST>() =>
       _findState(states, ST.toString()).stateStream.map((state) => state as ST);
 
+  @override
   ST getState<ST extends BaseState>() => _findState(states, ST.toString()) as ST;
 
+  @override
   void dispatchEvent<ST extends BaseState>({@required Event<ST> event}) =>
       _dispatcher.sink.add(event);
 
