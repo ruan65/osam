@@ -18,6 +18,7 @@ abstract class BaseState extends Equatable {
 
   Map<String, Object> get namedProps;
 
+  @protected
   final _lastKnownHashCodes = <String, int>{};
 
   @protected

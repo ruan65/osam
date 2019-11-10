@@ -23,37 +23,41 @@ abstract class Store {
 class _StoreImpl implements Store {
   // ignore: close_sinks
   StreamController<Event> _dispatcher;
-
   @override
   Stream<Event> get eventStream => _dispatcher.stream;
 
   final List<BaseState> states;
-  final _denormalizedDomainStates = <String, BaseState>{};
-
   final List<Middleware> middleWares;
 
-  void _initStore() => _dispatcher = StreamController<Event>.broadcast();
+  final _denormalizedDomainStates = <String, BaseState>{};
+  final _denormalizedConditions = <Condition>[];
 
-  void _initMiddleware() => middleWares.forEach((middleware) => middleware.store = this);
+  void _initStore() {
+    _dispatcher = StreamController<Event>.broadcast();
+    _denormalizedConditions
+        .addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
+  }
 
   _StoreImpl({@required this.states, this.middleWares = const <Middleware>[]}) {
     _initStore();
-    if (middleWares.isNotEmpty) _initMiddleware();
 
     _dispatcher.stream.listen((event) {
-      for (Middleware middleware in middleWares) {
-        final nextEvent = middleware(event);
+      for (Condition condition in _denormalizedConditions) {
+        final nextEvent = condition(this, event);
         if (nextEvent)
           continue;
         else
           break;
       }
-      final targetState = _findState(states, event.stateType);
-      final lastKnownHashCode = targetState.hashCode;
-      event(targetState, event.bundle);
-      if (lastKnownHashCode != targetState.hashCode) targetState.update();
+      if (event is ModificationEvent) {
+        final targetState = _findState(states, event.stateType);
+        final lastKnownHashCode = targetState.hashCode;
+        event(targetState, event.bundle);
+        if (lastKnownHashCode != targetState.hashCode) targetState.update();
+      }
     });
   }
+
   @override
   Stream<ST> nextState<ST>() =>
       _findState(states, ST.toString()).stateStream.map((state) => state as ST);

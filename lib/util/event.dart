@@ -2,71 +2,34 @@ import 'package:osam/domain/state/base_state.dart';
 
 typedef void ReducerCaller<ST extends BaseState>(ST state, Object bundle);
 
-class Event<ST extends BaseState> {
-  final Object bundle;
-  String stateType;
+abstract class Event<ST extends BaseState> {
+  Object type;
+  Event({this.type = const Object()});
 
-  Event({this.bundle}) {
+  factory Event.modify({Object bundle, ReducerCaller<ST> reducerCaller, Object type}) =>
+      ModificationEvent<ST>(bundle: bundle, reducerCaller: reducerCaller, type: type);
+
+  factory Event.sideEffect({Object type, Object bundle}) => SideEffectEvent<ST>(bundle: bundle);
+}
+
+class ModificationEvent<ST extends BaseState> extends Event<ST> {
+  final Object bundle;
+  final ReducerCaller<ST> reducerCaller;
+  String stateType;
+  Object type;
+  ModificationEvent({this.bundle, this.reducerCaller, this.type}) : super(type: type) {
     stateType = ST.toString();
+    this.type = type;
   }
 
-  factory Event.modify({Object bundle, ReducerCaller<ST> reducerCaller}) =>
-      ModificationEvent<ST>(bundle: bundle, reducerCaller: reducerCaller);
-
-//  factory Event.sideEffect({Object type, Object bundle}) =>
-//      SideEffectEvent<ST>(bundle: bundle);
-
-//
-//  factory Event.extended() => _ExtendedEvent<ST>();
-
- // void call(ST state, bundle) => reducerCaller(state, bundle);
+  void call(ST state, bundle) => reducerCaller(state, bundle);
 }
-//
-class ModificationEvent<ST extends BaseState> extends Event<ST> {
-  final ReducerCaller<ST> reducerCaller;
-//
-ModificationEvent({this.bundle,this.reducerCaller});
-//  ModificationEvent({this.bundle, this.reducerCaller}) : super(bundle: bundle);
-//
+
+class SideEffectEvent<ST extends BaseState> extends Event<ST> {
+  final Object bundle;
+  Object type;
+
+  SideEffectEvent({this.bundle, this.type}) : super(type: type) {
+    this.type = type.runtimeType;
+  }
 }
-//
-//class SideEffectEvent<ST extends BaseState> extends Event<ST> {
-//  Object type;
-//  SideEffectEvent({this.type, this.bundle}) : super(bundle: bundle) {
-//    this.type = type.runtimeType;
-//  }
-//
-//
-//}
-
-//class _RegularEvent<ST extends BaseState> implements Event<ST> {
-//  final ReducerCaller<ST> reducerCaller;
-//  String stateType;
-//
-
-//}
-//
-//class _SideEffectEvent<ST extends BaseState> implements Event<ST> {
-//
-//  Object type;
-//  _SideEffectEvent()
-//
-//}
-//
-//class _ExtendedEvent<ST extends BaseState> implements Event<ST> {}
-//
-////
-////class Event<ST extends BaseState> {
-////
-////  final Object bundle;
-////  final ReducerCaller<ST> reducerCaller;
-////  Object type;
-////  String stateType;
-////
-////  Event({this.reducerCaller, this.bundle, this.type}) {
-////    stateType = ST.toString();
-////    this.type = type.runtimeType;
-////  }
-////
-////
-////}

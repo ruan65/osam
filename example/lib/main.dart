@@ -6,10 +6,30 @@ void main() => runApp(MyApp());
 // ignore: must_be_immutable
 class Counter extends BaseState {
   var count = 0;
+  void increment() => count = count + 1;
 
   @override
   Map<String, Object> get namedProps => {'count': count};
 }
+
+class MyMiddleware extends Middleware {
+  bool isIncrement(Store store, Event<BaseState> event) {
+    if (event.type == EventType.increment) {
+      // side effect
+      Future.delayed(Duration(seconds: 1), () {
+        store.dispatchEvent<Counter>(
+            event: Event.modify(
+                reducerCaller: (state, bundle) => state.increment(), type: EventType.increment));
+      });
+    }
+    return nextEvent(true);
+  }
+
+  @override
+  List<Condition> get conditions => [isIncrement];
+}
+
+enum EventType { increment }
 
 class MyApp extends StatelessWidget {
   @override
@@ -19,6 +39,8 @@ class MyApp extends StatelessWidget {
         child: MyHomePage(),
         store: Store(states: [
           Counter(),
+        ], middleWares: [
+          MyMiddleware()
         ]),
       ),
     );
@@ -53,7 +75,9 @@ class MyHomePage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             StoreProvider.of(context).dispatchEvent<Counter>(
-                event: Event(reducerCaller: (state, bundle) => state.count++));
+                event: Event.modify(
+                    reducerCaller: (state, bundle) => state.increment(),
+                    type: EventType.increment));
           },
           tooltip: 'Increment',
           child: Icon(Icons.add),
