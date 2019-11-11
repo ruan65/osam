@@ -1,6 +1,6 @@
 import 'package:osam/domain/state/base_state.dart';
 
-typedef void ReducerCaller<ST extends BaseState>(ST state, Object bundle);
+typedef void ReducerCaller<ST extends BaseState>(ST state);
 
 abstract class Event<ST extends BaseState> {
   Object type;
@@ -22,7 +22,7 @@ class ModificationEvent<ST extends BaseState> extends Event<ST> {
     this.type = type;
   }
 
-  void call(ST state, bundle) => reducerCaller(state, bundle);
+  void call(ST state, bundle) => reducerCaller(state);
 }
 
 class SideEffectEvent<ST extends BaseState> extends Event<ST> {

@@ -6,7 +6,7 @@ void main() => runApp(MyApp());
 // ignore: must_be_immutable
 class Counter extends BaseState {
   var count = 0;
-  void increment() => count = count + 1;
+  void increment(int number) => count = count + number;
 
   @override
   Map<String, Object> get namedProps => {'count': count};
@@ -19,7 +19,7 @@ class MyMiddleware extends Middleware {
       Future.delayed(Duration(seconds: 1), () {
         store.dispatchEvent<Counter>(
             event: Event.modify(
-                reducerCaller: (state, bundle) => state.increment(), type: EventType.increment));
+                reducerCaller: (state) => state.increment(1), type: EventType.increment));
       });
     }
     return nextEvent(true);
@@ -76,8 +76,7 @@ class MyHomePage extends StatelessWidget {
           onPressed: () {
             StoreProvider.of(context).dispatchEvent<Counter>(
                 event: Event.modify(
-                    reducerCaller: (state, bundle) => state.increment(),
-                    type: EventType.increment));
+                    reducerCaller: (state) => state.increment(5), type: EventType.increment));
           },
           tooltip: 'Increment',
           child: Icon(Icons.add),

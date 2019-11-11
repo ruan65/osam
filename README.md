@@ -1,5 +1,5 @@
 # OSAM
-![GitHub Logo](images/logo.jpg)
+![GitHub Logo](images/Frame 9.svg)
 
 State management library
 
