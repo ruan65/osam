@@ -24,14 +24,13 @@ abstract class BaseState extends Equatable {
   @protected
   void _init() => _stateBroadcaster = StreamController<BaseState>.broadcast();
 
-  @protected
-  void _rememberLastKnownHashCodes() => namedProps
-      .forEach((k, v) => _lastKnownHashCodes.putIfAbsent(k, () => ComparableWrapper(v).hashCode));
+  // @protected
+  void rememberLastKnownHashCodes() =>
+      namedProps.forEach((k, v) => _lastKnownHashCodes[k] = ComparableWrapper(v).hashCode);
 
-  void update() {
+  Future<void> update() async {
     if (_stateBroadcaster.isClosed) _init();
     _stateBroadcaster.sink.add(this);
-    _rememberLastKnownHashCodes();
   }
 
   @override

@@ -53,7 +53,10 @@ class _StoreImpl implements Store {
         final targetState = _findState(states, event.stateType);
         final lastKnownHashCode = targetState.hashCode;
         event(targetState, event.bundle);
-        if (lastKnownHashCode != targetState.hashCode) targetState.update();
+        if (lastKnownHashCode != targetState.hashCode)
+          targetState.update().then((_) {
+            targetState.rememberLastKnownHashCodes();
+          });
       }
     });
   }

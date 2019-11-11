@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         store: Store(states: [
           Counter(),
         ], middleWares: [
-          MyMiddleware()
+          // MyMiddleware()
         ]),
       ),
     );
