@@ -4,6 +4,7 @@ typedef void ReducerCaller<ST extends BaseState>(ST state);
 
 abstract class Event<ST extends BaseState> {
   Object type;
+  Object bundle;
   Event({this.type = const Object()});
 
   factory Event.modify({Object bundle, ReducerCaller<ST> reducerCaller, Object type}) =>
