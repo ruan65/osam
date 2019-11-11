@@ -33,6 +33,6 @@ class SideEffectEvent<ST extends BaseState> extends Event<ST> {
   Object type;
 
   SideEffectEvent({this.bundle, this.type}) : super(type: type) {
-    this.type = type.runtimeType;
+    this.type = type;
   }
 }
