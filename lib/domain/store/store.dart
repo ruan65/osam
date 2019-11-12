@@ -5,8 +5,6 @@ import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/util/event.dart';
 
-//todo: make it singleton?
-
 abstract class Store {
   factory Store({List<BaseState> states, List<Middleware> middleWares = const <Middleware>[]}) =>
       _StoreImpl(states: states, middleWares: middleWares);
@@ -21,29 +19,38 @@ abstract class Store {
 }
 
 class _StoreImpl implements Store {
+  static final _StoreImpl _storeSingleton = _StoreImpl._internal();
+
+  factory _StoreImpl(
+      {@required List<BaseState> states, List<Middleware> middleWares = const <Middleware>[]}) {
+    _storeSingleton.states ??= states;
+    _storeSingleton.middleWares ??= middleWares;
+    if (_storeSingleton._dispatcher == null) _storeSingleton._initStore();
+    return _storeSingleton;
+  }
+
+  _StoreImpl._internal();
+
   // ignore: close_sinks
   StreamController<Event> _dispatcher;
   @override
   Stream<Event> get eventStream => _dispatcher.stream;
 
-  final List<BaseState> states;
-  final List<Middleware> middleWares;
+  List<BaseState> states;
+  List<Middleware> middleWares;
 
   final _denormalizedDomainStates = <String, BaseState>{};
   final _denormalizedConditions = <Condition>[];
 
   void _initStore() {
     _dispatcher = StreamController<Event>.broadcast();
+    middleWares.forEach((middleWares) => middleWares.store = this);
     _denormalizedConditions
         .addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
-  }
-
-  _StoreImpl({@required this.states, this.middleWares = const <Middleware>[]}) {
-    _initStore();
 
     _dispatcher.stream.listen((event) {
       for (Condition condition in _denormalizedConditions) {
-        final nextEvent = condition(this, event);
+        final nextEvent = condition(event);
         if (nextEvent)
           continue;
         else

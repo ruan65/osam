@@ -1,23 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+import 'package:osam/osam.dart';
 import 'package:provider/provider.dart';
 
 import 'presenter.dart';
 
 class PresenterProvider<PT extends Presenter> extends StatelessWidget {
-  final Widget child;
   final PT presenter;
-  const PresenterProvider({Key key, this.child, this.presenter}) : super(key: key);
+  final Widget child;
+  const PresenterProvider({Key key, this.presenter, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      builder: (ctx) => this,
+    return Provider<PT>(
+      builder: (ctx) => presenter
+        ..store = StoreProvider.of(context)
+        ..init(),
       child: child,
-      dispose: (ctx, PresenterProvider presenterProvider) => presenterProvider.dispose(),
+      dispose: (ctx, PT presenter) => presenter.dispose(),
     );
   }
 
-  static Presenter of<PT extends Presenter>(BuildContext context) => Provider.of<PT>(context);
+  static PT of<PT extends Presenter>(BuildContext context) => Provider.of<PT>(context);
+}
 
-  void dispose() => presenter.dispose();
+@experimental
+class MultiPresenterProvider extends StatelessWidget {
+  final List<Presenter> presenters;
+  final Widget child;
+  const MultiPresenterProvider({Key key, this.presenters, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: presenters
+            .map((presenter) => Provider(
+                  builder: (ctx) => presenter
+                    ..store = StoreProvider.of(context)
+                    ..init(),
+                  child: child,
+                  dispose: (ctx, Presenter presenter) => presenter.dispose(),
+                ))
+            .toList());
+  }
+
+  static PT of<PT extends Presenter>(BuildContext context) => Provider.of<PT>(context);
 }

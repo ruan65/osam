@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:osam/domain/state/base_state.dart';
 
-typedef void ReducerCaller<ST extends BaseState>(ST state);
+typedef void ReducerCaller<ST extends BaseState>(ST state, Object bundle);
 
 abstract class Event<ST extends BaseState> {
-  Object type;
-  Object bundle;
-  Event({this.type = const Object()});
+  final Object type;
+  final Object bundle;
+  Event({
+    this.type = const Object(),
+    this.bundle,
+  });
 
   factory Event.modify({Object bundle, @required ReducerCaller<ST> reducerCaller, Object type}) =>
       ModificationEvent<ST>(bundle: bundle, reducerCaller: reducerCaller, type: type);
@@ -16,23 +19,22 @@ abstract class Event<ST extends BaseState> {
 }
 
 class ModificationEvent<ST extends BaseState> extends Event<ST> {
+  final Object type;
   final Object bundle;
   final ReducerCaller<ST> reducerCaller;
   String stateType;
-  Object type;
-  ModificationEvent({this.bundle, this.reducerCaller, this.type}) : super(type: type) {
+
+  ModificationEvent({this.bundle, this.reducerCaller, this.type})
+      : super(type: type, bundle: bundle) {
     stateType = ST.toString();
-    this.type = type;
   }
 
-  void call(ST state, bundle) => reducerCaller(state);
+  void call(ST state, bundle) => reducerCaller(state, bundle);
 }
 
 class SideEffectEvent<ST extends BaseState> extends Event<ST> {
   final Object bundle;
   Object type;
 
-  SideEffectEvent({this.bundle, this.type}) : super(type: type) {
-    this.type = type;
-  }
+  SideEffectEvent({this.bundle, this.type}) : super(type: type, bundle: bundle);
 }

@@ -1,33 +1,10 @@
+import 'package:example/middleware.dart';
+import 'package:example/presenter.dart';
+import 'package:example/state.dart';
 import 'package:flutter/material.dart';
 import 'package:osam/osam.dart';
 
 void main() => runApp(MyApp());
-
-// ignore: must_be_immutable
-class Counter extends BaseState {
-  var count = 0;
-  void increment(int number) => count = count + number;
-
-  @override
-  Map<String, Object> get namedProps => {'count': count};
-}
-
-class MyMiddleware extends Middleware {
-  bool isIncrement(Store store, Event<BaseState> event) {
-    if (event.type == EventType.increment) {
-      // side effect
-      Future.delayed(Duration(seconds: 1), () {
-        store.dispatchEvent<Counter>(
-            event: Event.modify(
-                reducerCaller: (state) => state.increment(1), type: EventType.increment));
-      });
-    }
-    return nextEvent(true);
-  }
-
-  @override
-  List<Condition> get conditions => [isIncrement];
-}
 
 enum EventType { increment }
 
@@ -40,7 +17,7 @@ class MyApp extends StatelessWidget {
         store: Store(states: [
           Counter(),
         ], middleWares: [
-          // MyMiddleware()
+          MyMiddleware()
         ]),
       ),
     );
@@ -72,14 +49,20 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            StoreProvider.of(context).dispatchEvent<Counter>(
-                event: Event.modify(
-                    reducerCaller: (state) => state.increment(5), type: EventType.increment));
-          },
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ));
+        floatingActionButton:
+            PresenterProvider<MPresenter>(child: Button(), presenter: MPresenter()));
+  }
+}
+
+class Button extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        PresenterProvider.of<MPresenter>(context).increment();
+      },
+      tooltip: 'Increment',
+      child: Icon(Icons.add),
+    );
   }
 }
