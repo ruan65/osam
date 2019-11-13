@@ -58,9 +58,11 @@ class _StoreImpl implements Store {
       }
       if (event is ModificationEvent) {
         final targetState = _findState(states, event.stateType);
-        final lastKnownHashCode = targetState.hashCode;
         event(targetState, event.bundle);
-        if (lastKnownHashCode != targetState.hashCode) targetState.update();
+      } else if (event is NattyEvent) {
+        event(event.state, event.bundle);
+      } else {
+        return;
       }
     });
   }

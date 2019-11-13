@@ -11,8 +11,8 @@ class MyMiddleware extends Middleware {
       // side effect
       Future.delayed(Duration(seconds: 1), () {
         store.dispatchEvent<Counter>(
-            event: Event.modify(
-                reducerCaller: (state, _) => state.increment(1), type: EventType.increment));
+            event:
+                Event.modify(reducer: (state, _) => state.increment(1), type: EventType.increment));
       });
     }
     return nextEvent(true);
