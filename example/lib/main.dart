@@ -1,4 +1,3 @@
-import 'package:example/middleware.dart';
 import 'package:example/presenter.dart';
 import 'package:example/state.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
         store: Store(states: [
           Counter(),
         ], middleWares: [
-          MyMiddleware()
+          //    MyMiddleware()
         ]),
       ),
     );
@@ -38,8 +37,8 @@ class MyHomePage extends StatelessWidget {
               ),
               StreamBuilder(
                 initialData: state.count,
-                stream: state.propertyStream<int>('count'),
-                builder: (ctx, AsyncSnapshot<int> snapshot) {
+                stream: state.propertyStream<Counter, List<int>>((state) => state.count),
+                builder: (ctx, AsyncSnapshot<List<int>> snapshot) {
                   return Text(
                     snapshot.data.toString(),
                     style: TextStyle(fontSize: 50),
