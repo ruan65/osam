@@ -1,45 +1,39 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/util/event.dart';
 
-abstract class Store {
-  factory Store({List<BaseState> states, List<Middleware> middleWares = const <Middleware>[]}) =>
-      _StoreImpl(states: states, middleWares: middleWares);
+abstract class Store<ST extends BaseState> {
+  final ST state;
 
-  Stream<ST> nextState<ST>();
+  Store(this.state);
 
-  ST getState<ST extends BaseState>();
+  factory Store.single(ST state, {List<Middleware> middleWares = const <Middleware>[]}) =>
+      _StoreImpl(state: state, middleWares: middleWares);
+
+  Stream<ST> nextState<ST extends BaseState>(ST state);
 
   void dispatchEvent<ST extends BaseState>({@required Event<ST> event});
 
   Stream<Event> get eventStream;
 }
 
-class _StoreImpl implements Store {
-  static final _StoreImpl _storeSingleton = _StoreImpl._internal();
+class _StoreImpl<ST extends BaseState> implements Store<ST> {
+  final ST state;
+  final List<Middleware> middleWares;
 
-  factory _StoreImpl(
-      {@required List<BaseState> states, List<Middleware> middleWares = const <Middleware>[]}) {
-    _storeSingleton.states ??= states;
-    _storeSingleton.middleWares ??= middleWares;
-    if (_storeSingleton._dispatcher == null) _storeSingleton._initStore();
-    return _storeSingleton;
+  _StoreImpl({this.state, this.middleWares}) {
+    _initStore();
   }
-
-  _StoreImpl._internal();
 
   // ignore: close_sinks
   StreamController<Event> _dispatcher;
+
   @override
   Stream<Event> get eventStream => _dispatcher.stream;
 
-  List<BaseState> states;
-  List<Middleware> middleWares;
-
-  final _denormalizedDomainStates = <String, BaseState>{};
   final _denormalizedConditions = <Condition>[];
 
   void _initStore() {
@@ -57,60 +51,15 @@ class _StoreImpl implements Store {
           break;
       }
       if (event is ModificationEvent) {
-        final targetState = _findState(states, event.stateType);
-        event(targetState, event.bundle);
-      } else if (event is NattyEvent) {
-        event(event.state, event.bundle);
-      } else {
-        return;
+        event(state, event.bundle);
       }
     });
   }
 
   @override
-  Stream<ST> nextState<ST>() =>
-      _findState(states, ST.toString()).stateStream.map((state) => state as ST);
-
-  @override
-  ST getState<ST extends BaseState>() => _findState(states, ST.toString()) as ST;
+  Stream<ST> nextState<ST extends BaseState>(ST state) => state.stateStream;
 
   @override
   void dispatchEvent<ST extends BaseState>({@required Event<ST> event}) =>
       _dispatcher.sink.add(event);
-
-  void _fillDenormalizedStates(Iterable<BaseState> statesMap) =>
-      _denormalizedDomainStates.addAll(Map<String, BaseState>.fromIterable(statesMap,
-          key: (state) => state.runtimeType.toString(), value: (state) => state));
-
-  BaseState _findState(List<BaseState> reactiveIncomeStates, String stateType) {
-    final denormalizedPotentialState = _denormalizedDomainStates[stateType];
-
-    if (denormalizedPotentialState != null) {
-      return denormalizedPotentialState;
-    }
-    final potentialState = reactiveIncomeStates
-        .firstWhere((state) => state.runtimeType.toString() == stateType, orElse: () => null);
-
-    if (potentialState != null) {
-      _denormalizedDomainStates.putIfAbsent(stateType, () => potentialState);
-      return potentialState;
-    }
-
-    final parentStates = reactiveIncomeStates
-        .where((state) => (state.props.where((prop) => prop is BaseState).isNotEmpty));
-
-    _fillDenormalizedStates(parentStates);
-
-    final listWithStates = parentStates
-        .map<List<BaseState>>((state) => state.props.where((prop) => prop is BaseState).toList())
-        .toList()
-        .expand((state) => state)
-        .toList()
-        .map<BaseState>((state) => state)
-        .toList();
-
-    _fillDenormalizedStates(listWithStates);
-
-    return _findState(listWithStates, stateType);
-  }
 }

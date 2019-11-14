@@ -8,6 +8,9 @@ typedef V ValueMapper<ST extends BaseState, V>(ST state);
 
 // ignore: must_be_immutable
 abstract class BaseState extends Equatable {
+  @protected
+  int _lastKnownHashCode;
+
   StreamController<BaseState> _stateBroadcaster = StreamController<BaseState>.broadcast();
   Stream<BaseState> get stateStream => _stateBroadcaster.stream;
 
@@ -19,8 +22,15 @@ abstract class BaseState extends Equatable {
 
   void update() {
     if (_stateBroadcaster.isClosed) _init();
-    _stateBroadcaster.sink.add(this);
+    if (_lastKnownHashCode != this.hashCode) {
+      _broadcastItSelf().then((_) {
+        _lastKnownHashCode = this.hashCode;
+      });
+    }
   }
+
+  @protected
+  Future<void> _broadcastItSelf() async => _stateBroadcaster.sink.add(this);
 
   @override
   List<Object> get props;

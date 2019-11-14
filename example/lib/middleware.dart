@@ -1,4 +1,3 @@
-import 'package:example/state.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/util/event.dart';
@@ -10,9 +9,9 @@ class MyMiddleware extends Middleware {
     if (event.type == EventType.increment) {
       // side effect
       Future.delayed(Duration(seconds: 1), () {
-        store.dispatchEvent<Counter>(
-            event:
-                Event.modify(reducer: (state, _) => state.increment(1), type: EventType.increment));
+//        store.dispatchEvent<Counter>(
+//            event:
+//                Event.modify(reducer: (state, _) => state.increment(1), type: EventType.increment));
       });
     }
     return nextEvent(true);

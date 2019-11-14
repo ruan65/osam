@@ -1,7 +1,8 @@
+import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/domain/store/store.dart';
 
-abstract class Presenter {
-  Store store;
+abstract class Presenter<ST extends BaseState> {
+  Store<ST> store;
 
   void init();
 
