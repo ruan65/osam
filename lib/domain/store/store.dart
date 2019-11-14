@@ -1,30 +1,31 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/util/event.dart';
 
 abstract class Store<ST extends BaseState> {
-  final ST state;
+  ST get state;
+  factory Store(ST state, {List<Middleware> middleWares = const <Middleware>[]}) =>
+      _StoreImpl(generalState: state, middleWares: middleWares);
 
-  Store(this.state);
+  Stream<ST> nextState(ST state);
 
-  factory Store.single(ST state, {List<Middleware> middleWares = const <Middleware>[]}) =>
-      _StoreImpl(state: state, middleWares: middleWares);
-
-  Stream<ST> nextState<ST extends BaseState>(ST state);
-
-  void dispatchEvent<ST extends BaseState>({@required Event<ST> event});
+  void dispatchEvent({@required Event<ST> event});
 
   Stream<Event> get eventStream;
 }
 
 class _StoreImpl<ST extends BaseState> implements Store<ST> {
-  final ST state;
+  final ST generalState;
+
+  @override
+  ST get state => generalState;
+
   final List<Middleware> middleWares;
 
-  _StoreImpl({this.state, this.middleWares}) {
+  _StoreImpl({this.generalState, this.middleWares}) {
     _initStore();
   }
 
@@ -57,9 +58,8 @@ class _StoreImpl<ST extends BaseState> implements Store<ST> {
   }
 
   @override
-  Stream<ST> nextState<ST extends BaseState>(ST state) => state.stateStream;
+  Stream<ST> nextState(ST state) => state.stateStream;
 
   @override
-  void dispatchEvent<ST extends BaseState>({@required Event<ST> event}) =>
-      _dispatcher.sink.add(event);
+  void dispatchEvent({@required Event<ST> event}) => _dispatcher.sink.add(event);
 }

@@ -1,13 +1,17 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:osam/util/comparable_wrapper.dart';
 
 typedef V ValueMapper<ST extends BaseState, V>(ST state);
 
 // ignore: must_be_immutable
 abstract class BaseState extends Equatable {
+  BaseState() {
+    _lastKnownHashCode = this.hashCode;
+  }
+
   @protected
   int _lastKnownHashCode;
 
@@ -23,14 +27,10 @@ abstract class BaseState extends Equatable {
   void update() {
     if (_stateBroadcaster.isClosed) _init();
     if (_lastKnownHashCode != this.hashCode) {
-      _broadcastItSelf().then((_) {
-        _lastKnownHashCode = this.hashCode;
-      });
+      _stateBroadcaster.sink.add(this);
+      _lastKnownHashCode = this.hashCode;
     }
   }
-
-  @protected
-  Future<void> _broadcastItSelf() async => _stateBroadcaster.sink.add(this);
 
   @override
   List<Object> get props;
@@ -43,7 +43,7 @@ class _PropertyStream<V> {
   int valueHashCode;
   _PropertyStream(this.inputStream);
 
-  Stream<V> get propertyStream => inputStream.distinct((prev, next) {
+  Stream<V> get propertyStream => inputStream.distinct((_, next) {
         return valueHashCode == ComparableWrapper(next).hashCode;
       }).map((value) {
         valueHashCode = ComparableWrapper(value).hashCode;

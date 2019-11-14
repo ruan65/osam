@@ -2,14 +2,12 @@ import 'package:example/state.dart';
 import 'package:flutter/material.dart';
 import 'package:osam/osam.dart';
 
-import 'model.dart';
-
 void main() => runApp(MyApp());
 
 enum EventType { increment, incrementValue }
 
 class MyApp extends StatelessWidget {
-  final store = Store<Counter>.single(Counter(), middleWares: []);
+  final store = Store(Counter(), middleWares: []);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final state = StoreProvider.of(context).state as Counter;
     return Scaffold(
         body: Center(
           child: Column(
@@ -35,61 +32,26 @@ class MyHomePage extends StatelessWidget {
                 'You have pushed the button this many times:',
               ),
               StreamBuilder(
-                initialData: state.count.values.toList(),
-                stream: state
-                    .propertyStream<Counter, List<Model>>((state) => state.count.values.toList()),
-                builder: (ctx, AsyncSnapshot<List<Model>> snapshot) {
-                  print('123');
-                  return Column(
-                    children: snapshot.data.map((model) => RText(model: model)).toList(),
-                  );
+                initialData: StoreProvider.of<Store<Counter>>(context).state.count,
+                stream: StoreProvider.of<Store<Counter>>(context)
+                    .state
+                    .propertyStream<Counter, int>((state) => state.count),
+                builder: (ctx, AsyncSnapshot<int> snapshot) {
+                  return Text(snapshot.data.toString());
                 },
               )
             ],
           ),
         ),
-        floatingActionButton: Button());
-  }
-}
-
-class RText extends StatelessWidget {
-  final Model model;
-  const RText({Key key, this.model}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      initialData: model.number,
-      stream: model.propertyStream<Model, int>((state) => state.number),
-      builder: (ctx, AsyncSnapshot<int> snapshot) {
-        print('model');
-        return GestureDetector(
-          onTap: () {
-            StoreProvider.of(context).dispatchEvent<Counter>(
-                event: Event.modify(
-                    reducerCaller: (state, bundle) => state.count[model.key]..increment()));
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+                event: Event.modify(reducerCaller: (state, _) => state..increment(1)));
+            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+                event: Event.modify(reducerCaller: (state, _) => state..increment(2)));
+            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+                event: Event.modify(reducerCaller: (state, _) => state..increment(3)));
           },
-          child: Text(
-            snapshot.data.toString(),
-            style: TextStyle(fontSize: 25),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class Button extends StatelessWidget {
-  int number = 0;
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        number++;
-        StoreProvider.of(context).dispatchEvent<Counter>(
-            event: Event.modify(reducerCaller: (state, _) => state..increment(number)));
-      },
-      tooltip: 'Increment',
-      child: Icon(Icons.add),
-    );
+        ));
   }
 }

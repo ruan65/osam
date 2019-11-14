@@ -26,7 +26,7 @@ class ModificationEvent<ST extends BaseState> extends Event<ST> {
   ModificationEvent({this.bundle, this.reducerCaller, this.type})
       : super(type: type, bundle: bundle);
 
-  BaseState call(ST state, bundle) => reducerCaller(state, bundle)..update();
+  void call(ST state, bundle) => reducerCaller(state, bundle).update();
 }
 
 class SideEffectEvent<ST extends BaseState> extends Event<ST> {

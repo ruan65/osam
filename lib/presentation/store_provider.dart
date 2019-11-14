@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:osam/domain/state/base_state.dart';
+import 'package:flutter/material.dart';
 import 'package:osam/domain/store/store.dart';
 import 'package:provider/provider.dart';
 
-class StoreProvider<ST extends BaseState> extends StatelessWidget {
-  final Store<ST> store;
+class StoreProvider<S extends Store> extends StatelessWidget {
+  final S store;
   final Widget child;
   const StoreProvider({Key key, this.store, this.child}) : super(key: key);
 
@@ -16,6 +15,5 @@ class StoreProvider<ST extends BaseState> extends StatelessWidget {
     );
   }
 
-  static Store<ST> of<ST extends BaseState>(BuildContext context) =>
-      Provider.of<Store<ST>>(context);
+  static S of<S extends Store>(BuildContext context) => Provider.of<S>(context);
 }

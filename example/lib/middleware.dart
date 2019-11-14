@@ -4,11 +4,12 @@ import 'package:osam/util/event.dart';
 
 import 'main.dart';
 
-class MyMiddleware extends Middleware {
+class MyMiddleware<Counter extends BaseState> extends Middleware<Counter> {
   bool isIncrement(Event<BaseState> event) {
     if (event.type == EventType.increment) {
       // side effect
       Future.delayed(Duration(seconds: 1), () {
+        print(store.state);
 //        store.dispatchEvent<Counter>(
 //            event:
 //                Event.modify(reducer: (state, _) => state.increment(1), type: EventType.increment));

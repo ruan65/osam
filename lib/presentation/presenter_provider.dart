@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'presenter.dart';
 
-class PresenterProvider<PT extends Presenter> extends StatelessWidget {
+class PresenterProvider<PT extends Presenter, S extends Store> extends StatelessWidget {
   final PT presenter;
   final Widget child;
   const PresenterProvider({Key key, this.presenter, this.child}) : super(key: key);
@@ -14,7 +14,7 @@ class PresenterProvider<PT extends Presenter> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<PT>(
       builder: (ctx) => presenter
-        ..store = StoreProvider.of(context)
+        ..store = StoreProvider.of<S>(context)
         ..init(),
       child: child,
       dispose: (ctx, PT presenter) => presenter.dispose(),

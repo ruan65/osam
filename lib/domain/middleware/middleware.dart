@@ -4,8 +4,8 @@ import 'package:osam/util/event.dart';
 
 typedef bool Condition(Event<BaseState> event);
 
-abstract class Middleware {
-  Store store;
+abstract class Middleware<S extends Store> {
+  S store;
 
   bool nextEvent(bool next) => next;
   List<Condition> get conditions;
