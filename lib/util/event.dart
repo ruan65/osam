@@ -1,18 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:osam/domain/state/base_state.dart';
 
-typedef BaseState ReducerCaller<ST extends BaseState>(ST state, Object bundle);
+typedef BaseState Reducer<ST extends BaseState>(ST state, Object bundle);
 
 abstract class Event<ST extends BaseState> {
   final Object type;
   final Object bundle;
+
   Event({
     this.type = const Object(),
     this.bundle,
   });
 
-  factory Event.modify({Object bundle, @required ReducerCaller<ST> reducerCaller, Object type}) =>
-      ModificationEvent<ST>(bundle: bundle, reducerCaller: reducerCaller, type: type);
+  factory Event.modify({Object bundle, @required Reducer<ST> reducer, Object type}) =>
+      ModificationEvent<ST>(bundle: bundle, reducer: reducer, type: type);
 
   factory Event.sideEffect({@required Object type, Object bundle}) =>
       SideEffectEvent<ST>(bundle: bundle, type: type);
@@ -21,12 +22,11 @@ abstract class Event<ST extends BaseState> {
 class ModificationEvent<ST extends BaseState> extends Event<ST> {
   final Object type;
   final Object bundle;
-  final ReducerCaller<ST> reducerCaller;
+  final Reducer<ST> reducer;
 
-  ModificationEvent({this.bundle, this.reducerCaller, this.type})
-      : super(type: type, bundle: bundle);
+  ModificationEvent({this.bundle, this.reducer, this.type}) : super(type: type, bundle: bundle);
 
-  void call(ST state, bundle) => reducerCaller(state, bundle).update();
+  void call(ST state, Object bundle) => reducer(state, bundle).update();
 }
 
 class SideEffectEvent<ST extends BaseState> extends Event<ST> {

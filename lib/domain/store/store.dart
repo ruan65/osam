@@ -58,7 +58,7 @@ class _StoreImpl<ST extends BaseState> implements Store<ST> {
   }
 
   @override
-  Stream<ST> nextState(ST state) => state.stateStream;
+  Stream<ST> nextState(ST state) => state.stateStream();
 
   @override
   void dispatchEvent({@required Event<ST> event}) => _dispatcher.sink.add(event);

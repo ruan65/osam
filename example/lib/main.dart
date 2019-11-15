@@ -9,7 +9,7 @@ void main() => runApp(MyApp());
 enum EventType { increment, incrementValue }
 
 class MyApp extends StatelessWidget {
-  final store = Store(Counter(), middleWares: [MyMiddleware()]);
+  final store = Store(AppState(), middleWares: [MyMiddleware()]);
 
   @override
   Widget build(BuildContext context) {
@@ -33,38 +33,31 @@ class MyHomePage extends StatelessWidget {
               Text(
                 'You have pushed the button this many times:',
               ),
-              StreamBuilder(
-                initialData: StoreProvider.of<Store<Counter>>(context).state.count,
-                stream: StoreProvider.of<Store<Counter>>(context)
-                    .state
-                    .propertyStream<Counter, int>((state) => state.count),
-                builder: (ctx, AsyncSnapshot<int> snapshot) {
-                  return Text(snapshot.data.toString());
-                },
-              )
             ],
           ),
         ),
-        floatingActionButton: PresenterProvider(
+        floatingActionButton: PresenterProvider<ExamplePresenter, Store<AppState>>(
           presenter: ExamplePresenter(),
           child: Button(),
         ));
   }
 }
+
 class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final presenter = PresenterProvider.of<ExamplePresenter<Store<AppState>>>(context);
     return FloatingActionButton(
       onPressed: () {
-        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-            event: Event.modify(
-                reducerCaller: (state, _) => state..increment(1), type: EventType.increment));
-        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-            event: Event.modify(reducerCaller: (state, _) => state..increment(2)));
-        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-            event: Event.modify(reducerCaller: (state, _) => state..increment(3)));
+        presenter.increment();
       },
+      child: StreamBuilder(
+        initialData: presenter.initialData,
+        stream: presenter.valueStream,
+        builder: (ctx, AsyncSnapshot<int> snapshot) {
+          return Text(snapshot.data.toString());
+        },
+      ),
     );
   }
-
 }

@@ -16,10 +16,11 @@ abstract class BaseState extends Equatable {
   int _lastKnownHashCode;
 
   StreamController<BaseState> _stateBroadcaster = StreamController<BaseState>.broadcast();
-  Stream<BaseState> get stateStream => _stateBroadcaster.stream;
+  Stream<ST> stateStream<ST extends BaseState>() =>
+      _stateBroadcaster.stream.map((state) => state as ST);
 
   Stream<V> propertyStream<ST extends BaseState, V>(ValueMapper<ST, V> mapper) =>
-      _PropertyStream<V>(stateStream.map<V>((state) => mapper(state))).propertyStream;
+      _PropertyStream<V>(stateStream().map<V>((state) => mapper(state))).propertyStream;
 
   @protected
   void _init() => _stateBroadcaster = StreamController<BaseState>.broadcast();

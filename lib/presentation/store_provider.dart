@@ -10,7 +10,7 @@ class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider.value(
+    return Provider<S>.value(
       value: store,
       child: child,
     );

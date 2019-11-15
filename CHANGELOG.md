@@ -1,4 +1,4 @@
-## [1.3.4] - 15 nov 2019 14.26
+## [1.3.5] - 15 nov 2019 19.23
 
 *0.0.1 start osam ent
 
@@ -15,3 +15,5 @@
 *1.3.0 added natty event
 
 *1.3.4 edited presenter
+
+*1.3.5 edited streams for type safety

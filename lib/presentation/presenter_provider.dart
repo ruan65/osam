@@ -5,16 +5,17 @@ import 'package:provider/provider.dart';
 
 import 'presenter.dart';
 
-class PresenterProvider<S extends Store> extends StatelessWidget {
-  final Presenter presenter;
+class PresenterProvider<PT extends Presenter, S extends Store<BaseState>> extends StatelessWidget {
+  final PT presenter;
   final Widget child;
   const PresenterProvider({Key key, this.presenter, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
+    final store = StoreProvider.of<S>(context);
+    return Provider<PT>(
       builder: (ctx) => presenter
-        ..store = StoreProvider.of<S>(context)
+        ..store = store
         ..init(),
       child: child,
       dispose: (ctx, presenter) => presenter.dispose(),
