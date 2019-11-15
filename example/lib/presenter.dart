@@ -12,7 +12,6 @@ class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
   @override
   void init() {
     modelBroadcaster = StreamController<int>();
-
     store.nextState(store.state).listen((data) {});
   }
 
@@ -20,7 +19,7 @@ class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
       store.dispatchEvent(event: Event.modify(reducer: (state, _) => state..increment(1)));
 
   int get initialData => store.state.count;
-  Stream<int> get valueStream => store.state.propertyStream<AppState, int>((state) => state.count);
+  Stream<int> get valueStream => store.state.propertyStream<int>((state) => state.count);
 
   @override
   void dispose() {
