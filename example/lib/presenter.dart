@@ -1,23 +1,24 @@
-//import 'package:example/state.dart';
-//import 'package:osam/presentation/presenter.dart';
-//import 'package:osam/util/event.dart';
-//
-//import 'main.dart';
-//
-//class MPresenter extends Presenter {
-//  void increment() {
-//    final targerState = this.store.
-//
-//
-//
-//    this.store.dispatchEvent<Counter>(
-//        event: Event.modify(
-//            reducer: (state, _) => state.increment(number), type: EventType.increment));
-//  }
-//
-//  @override
-//  void dispose() {}
-//
-//  @override
-//  void init() {}
-//}
+import 'dart:async';
+
+import 'package:example/state.dart';
+import 'package:osam/domain/store/store.dart';
+import 'package:osam/presentation/presenter.dart';
+
+class ExamplePresenter<S extends Store<Counter>> extends Presenter<S> {
+  StreamSubscription stateSub;
+  StreamController<Counter> modelBroadcaster;
+
+  @override
+  void dispose() {
+    stateSub?.cancel();
+    modelBroadcaster.close();
+  }
+
+  @override
+  void init() {
+    modelBroadcaster = StreamController<Counter>();
+    stateSub = store.nextState(store.state).listen((data){
+      modelBroadcaster.sink.add(data);
+    });
+  }
+}

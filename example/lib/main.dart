@@ -1,3 +1,5 @@
+import 'package:example/middleware.dart';
+import 'package:example/presenter.dart';
 import 'package:example/state.dart';
 import 'package:flutter/material.dart';
 import 'package:osam/osam.dart';
@@ -7,7 +9,7 @@ void main() => runApp(MyApp());
 enum EventType { increment, incrementValue }
 
 class MyApp extends StatelessWidget {
-  final store = Store(Counter(), middleWares: []);
+  final store = Store(Counter(), middleWares: [MyMiddleware()]);
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +45,26 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-                event: Event.modify(reducerCaller: (state, _) => state..increment(1)));
-            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-                event: Event.modify(reducerCaller: (state, _) => state..increment(2)));
-            StoreProvider.of<Store<Counter>>(context).dispatchEvent(
-                event: Event.modify(reducerCaller: (state, _) => state..increment(3)));
-          },
+        floatingActionButton: PresenterProvider(
+          presenter: ExamplePresenter(),
+          child: Button(),
         ));
   }
+}
+class Button extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+            event: Event.modify(
+                reducerCaller: (state, _) => state..increment(1), type: EventType.increment));
+        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+            event: Event.modify(reducerCaller: (state, _) => state..increment(2)));
+        StoreProvider.of<Store<Counter>>(context).dispatchEvent(
+            event: Event.modify(reducerCaller: (state, _) => state..increment(3)));
+      },
+    );
+  }
+
 }

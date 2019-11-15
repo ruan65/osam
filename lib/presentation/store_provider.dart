@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/domain/store/store.dart';
 import 'package:provider/provider.dart';
 
-class StoreProvider<S extends Store> extends StatelessWidget {
+class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
   final S store;
   final Widget child;
   const StoreProvider({Key key, this.store, this.child}) : super(key: key);
@@ -15,5 +16,5 @@ class StoreProvider<S extends Store> extends StatelessWidget {
     );
   }
 
-  static S of<S extends Store>(BuildContext context) => Provider.of<S>(context);
+  static S of<S extends Store<BaseState>>(BuildContext context) => Provider.of<S>(context);
 }

@@ -40,13 +40,13 @@ abstract class BaseState extends Equatable {
 
 class _PropertyStream<V> {
   final Stream<V> inputStream;
-  int valueHashCode;
+  int _valueHashCode;
   _PropertyStream(this.inputStream);
 
   Stream<V> get propertyStream => inputStream.distinct((_, next) {
-        return valueHashCode == ComparableWrapper(next).hashCode;
+        return _valueHashCode == ComparableWrapper(next).hashCode;
       }).map((value) {
-        valueHashCode = ComparableWrapper(value).hashCode;
+        _valueHashCode = ComparableWrapper(value).hashCode;
         return value;
       });
 }
