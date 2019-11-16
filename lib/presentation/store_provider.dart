@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
   final S store;
   final Widget child;
-  const StoreProvider({Key key, this.store, this.child}) : super(key: key);
+  const StoreProvider({Key key, @required this.store, @required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

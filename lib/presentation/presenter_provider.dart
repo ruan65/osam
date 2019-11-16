@@ -8,7 +8,8 @@ import 'presenter.dart';
 class PresenterProvider<S extends Store<BaseState>, P extends Presenter> extends StatelessWidget {
   final P presenter;
   final Widget child;
-  const PresenterProvider({Key key, this.presenter, this.child}) : super(key: key);
+  const PresenterProvider({Key key, @required this.presenter, @required this.child})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
