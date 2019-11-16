@@ -7,6 +7,7 @@ import 'package:osam/util/event.dart';
 
 abstract class Store<ST extends BaseState<ST>> {
   ST get state;
+
   factory Store(ST state, {List<Middleware> middleWares = const <Middleware>[]}) =>
       _StoreImpl(appState: state, middleWares: middleWares);
 
@@ -52,7 +53,11 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
           break;
       }
       if (event is ModificationEvent) {
-        event(state, event.bundle);
+        try {
+          event(appState, event.bundle);
+        } catch (e) {
+          debugPrint(e);
+        }
       }
     });
   }

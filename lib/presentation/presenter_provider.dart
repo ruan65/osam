@@ -25,26 +25,3 @@ class PresenterProvider<S extends Store<BaseState>, P extends Presenter> extends
 
   static P of<P extends Presenter>(BuildContext context) => Provider.of<P>(context);
 }
-
-@experimental
-class MultiPresenterProvider extends StatelessWidget {
-  final List<Presenter> presenters;
-  final Widget child;
-  const MultiPresenterProvider({Key key, this.presenters, this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: presenters
-            .map((presenter) => Provider(
-                  builder: (ctx) => presenter
-                    ..store = StoreProvider.of(context)
-                    ..init(),
-                  child: child,
-                  dispose: (ctx, Presenter presenter) => presenter.dispose(),
-                ))
-            .toList());
-  }
-
-  static PT of<PT extends Presenter>(BuildContext context) => Provider.of<PT>(context);
-}
