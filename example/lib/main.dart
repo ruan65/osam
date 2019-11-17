@@ -31,7 +31,7 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             Text(
               'You have pushed the button this many times:',
-            ),
+            )
           ],
         ),
       ),

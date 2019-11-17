@@ -6,7 +6,7 @@ import 'package:osam/osam.dart';
 import 'package:osam/presentation/presenter.dart';
 
 class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
-  StreamSubscription stateSub;
+  StreamSubscription propertySub;
   StreamController<int> modelBroadcaster;
 
   @override
@@ -24,7 +24,7 @@ class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
 
   @override
   void dispose() {
-    stateSub?.cancel();
+    propertySub?.cancel();
     modelBroadcaster?.close();
   }
 }

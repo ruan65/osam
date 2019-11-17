@@ -7,9 +7,7 @@ class Model extends BaseState {
 
   Model(this.key);
 
-  void increment() {
-    number++;
-  }
+  void increment() => number++;
 
   @override
   List<Object> get props => [number];
