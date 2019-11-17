@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:osam/domain/state/base_state.dart';
 
 typedef BaseState Reducer<ST extends BaseState<ST>>(ST state, Object bundle);

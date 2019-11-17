@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:osam/osam.dart';
 import 'package:provider/provider.dart';
 
