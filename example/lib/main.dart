@@ -53,8 +53,8 @@ class Button extends StatelessWidget {
       },
       child: StreamBuilder(
         initialData: presenter.initialData,
-        stream: presenter.valueStream,
-        builder: (ctx, AsyncSnapshot<int> snapshot) {
+        stream: presenter.stream,
+        builder: (ctx, AsyncSnapshot<List<int>> snapshot) {
           return Text(snapshot.data.toString());
         },
       ),

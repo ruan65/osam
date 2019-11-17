@@ -19,7 +19,14 @@ abstract class BaseState<ST> extends Equatable {
   Stream<ST> get stateStream => _stateBroadcaster.stream.map((state) => state);
 
   Stream<V> propertyStream<V>(ValueMapper<ST, V> mapper) =>
-      _PropertyStream<V>(stateStream.map<V>((state) => mapper(state))).propertyStream;
+      _PropertyStream<V>(stateStream.map<V>((state) {
+        try {
+          return mapper(state);
+        } catch (e) {
+          print(e);
+          return null;
+        }
+      })).propertyStream;
 
   @protected
   void _init() => _stateBroadcaster = StreamController<ST>.broadcast();
@@ -44,7 +51,8 @@ class _PropertyStream<V> {
   _PropertyStream(this.inputStream);
 
   Stream<V> get propertyStream => inputStream.distinct((_, next) {
-        return _valueHashCode == ComparableWrapper(next).hashCode;
+        if (next != null) return _valueHashCode == ComparableWrapper(next).hashCode;
+        return true;
       }).map((value) {
         _valueHashCode = ComparableWrapper(value).hashCode;
         return value;

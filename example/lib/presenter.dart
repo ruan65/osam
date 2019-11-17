@@ -18,8 +18,9 @@ class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
   void increment() =>
       store.dispatchEvent(event: Event.modify(reducer: (state, _) => state..increment(1)));
 
-  int get initialData => store.state.count;
-  Stream<int> get valueStream => store.state.propertyStream<int>((state) => state.count);
+  List<int> get initialData => store.state.count;
+
+  Stream<List<int>> get stream => store.state.propertyStream<List<int>>((state) => state.count);
 
   @override
   void dispose() {
