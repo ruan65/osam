@@ -2,11 +2,13 @@
 ![GitHub Logo](images/logo2.jpg)
 
 #Introduction
+
 Osam - it is state management library inspired by redux, bloc and SOLID principles.
 If your are familiar with functional programming you should probably use built_redux but here is a lot of benefits
 then Bloc or Build_redux.
 
 #Glossary
+
 BaseState
 > it is mutable domain element witch contains data and state methods. BaseState streaming it self every
 time, when you calling methods by Event. Also BaseState can stream every property if you listen it.
