@@ -14,7 +14,7 @@ BaseState
 time, when you calling methods by Event. Also BaseState can stream every property if you listen it.
 Cool feature: property streams and state streams do NOT stream it self if previous state is equal
 
-#Event
+Event
 > Here is two types of this element. First - Event.modify, this is Event witch stores a reducer - just a lambda to 
 >call method of the state. Like:
 ```dart
@@ -28,7 +28,7 @@ Cool feature: property streams and state streams do NOT stream it self if previo
 >Second - Event.sideEffect. Try to guess... it for side effects. It is contains a bundle and type, to catch it
 > in middleware to.
 
-#Middleware
+Middleware
 > Middleware it is Domain element too, with you business logic conditions.
 > Every event is throwing inside every middleware. That means that you can send another event if you catch target event.
 >Example:
@@ -43,11 +43,13 @@ if (event.type == EventType.increment) {
 > Notice: return nextEvent with true if you want other middlewares can catch your target event. Or false if you
 > wouldn't.
 
-#Store
+Store
 >Domain element too. Stores your domain tree of states, starting from your appState entry point.
 >and stack of middlewares.
 
 #Rules
+
+
 Osam - it is about strong rules. Interfaces and inheritance of the domain and presentation layer is very strong.
 In my opinion it is very necessary if you are working in team.
 BaseState stream it self only if you dispatching Events to Store.
