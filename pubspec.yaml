@@ -1,6 +1,7 @@
 name: osam
-description: State management library
-version: 2.0.2
+description: State management library inspired redux, bloc and SOLID prenciples. It is null safety and vary stable
+  solution to avoid red screens and bad code.
+version: 2.1.9
 author: Daniil Surnin <dsrenesanse@gmail.com>
 homepage: https://github.com/Renesanse/osam
 

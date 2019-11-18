@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: StoreProvider(
+        key: ValueKey('store'),
         child: MyHomePage(),
         store: store,
       ),
@@ -36,6 +37,7 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: PresenterProvider<Store<AppState>, ExamplePresenter>(
+        key: ValueKey('counter'),
         presenter: ExamplePresenter(),
         child: Button(),
       ),
