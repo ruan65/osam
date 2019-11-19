@@ -16,7 +16,7 @@ abstract class Store<ST extends BaseState<ST>> {
   factory Store(ST state, {List<Middleware<Store<BaseState<ST>>>> middleWares = const []}) =>
       _StoreImpl(appState: state, middleWares: middleWares);
 
-  Stream<ST> nextState();
+  Stream<ST> get nextState;
 
   void dispatchEvent({@required Event<ST> event});
 
@@ -93,7 +93,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   }
 
   @override
-  Stream<ST> nextState() => appState.stateStream;
+  Stream<ST> get nextState => appState.stateStream;
 
   @override
   void dispatchEvent({@required Event<ST> event}) => _dispatcher.sink.add(event);
