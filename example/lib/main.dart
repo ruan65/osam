@@ -1,14 +1,24 @@
 import 'package:example/presenter.dart';
-import 'package:example/state.dart';
+import 'package:example/state/state.dart';
 import 'package:flutter/material.dart';
 import 'package:osam/osam.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final store = Store(AppState());
+  await store.initPersist(adapters: [AppStateAdapter()]);
+  //store.wipePersist();
+  runApp(MyApp(
+    store: store,
+  ));
+}
 
 enum EventType { increment, incrementValue }
 
 class MyApp extends StatelessWidget {
-  final store = Store(AppState(), middleWares: []);
+  final Store<AppState> store;
+
+  const MyApp({Key key, this.store}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +66,7 @@ class Button extends StatelessWidget {
       child: StreamBuilder(
         initialData: presenter.initialData,
         stream: presenter.stream,
-        builder: (ctx, AsyncSnapshot<List<int>> snapshot) {
+        builder: (ctx, AsyncSnapshot<int> snapshot) {
           return Text(snapshot.data.toString());
         },
       ),
