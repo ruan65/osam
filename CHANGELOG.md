@@ -20,4 +20,4 @@
 
 *2.0.1 added null safety calls
 
-*2.2.1 added persist
+*2.2.4 added persist
