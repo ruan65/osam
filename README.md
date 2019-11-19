@@ -1,7 +1,7 @@
 # OSAM
 ![GitHub Logo](images/logo2.jpg)
 
-#Examples
+# Examples
 
  https://github.com/Renesanse/popular_news
  

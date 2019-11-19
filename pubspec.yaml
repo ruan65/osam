@@ -1,7 +1,7 @@
 name: osam
-description: State management library inspired redux, bloc and SOLID prenciples. It is null safety and vary stable
+description: State management library inspired redux, bloc and SOLID prenciples. It is null safety and very stable
   solution to avoid red screens and bad code.
-version: 2.1.9
+version: 2.2.0
 author: Daniil Surnin <dsrenesanse@gmail.com>
 homepage: https://github.com/Renesanse/osam
 
@@ -9,7 +9,8 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  equatable: ^0.6.1
+  equatable: ^1.0.0
+  hive: ^1.1.1
   provider: ^3.1.0+1
 
   flutter:
