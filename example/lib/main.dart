@@ -1,13 +1,19 @@
 import 'package:example/presenter.dart';
 import 'package:example/state/state.dart';
+import 'package:example/subState.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:osam/osam.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Hive.init((await getApplicationDocumentsDirectory()).path);
+  Hive.registerAdapter(AppStateAdapter(), 0);
+  Hive.registerAdapter(SubStateAdapter(), 1);
   final store = Store(AppState());
-  await store.initPersist(adapters: [AppStateAdapter()]);
-  //store.wipePersist();
+  await store.initPersist();
+  store.wipePersist();
   runApp(MyApp(
     store: store,
   ));

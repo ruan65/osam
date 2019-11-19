@@ -15,16 +15,19 @@ class AppStateAdapter extends TypeAdapter<AppState> {
     };
     return AppState()
       ..count = fields[0] as int
-      ..list = (fields[1] as List)?.cast<int>();
+      ..list = (fields[1] as List)?.cast<dynamic>()
+      ..subState = fields[2] as dynamic;
   }
 
   @override
   void write(BinaryWriter writer, AppState obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.count)
       ..writeByte(1)
-      ..write(obj.list);
+      ..write(obj.list)
+      ..writeByte(2)
+      ..write(obj.subState);
   }
 }
