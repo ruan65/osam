@@ -1,4 +1,4 @@
-## [2.0.1] - 17 nov 2019 16.59
+## [2.1.1] - 19 nov 2019 20.31
 
 *0.0.1 start osam ent
 
@@ -19,3 +19,5 @@
 *1.3.5 edited streams for type safety
 
 *2.0.1 added null safety calls
+
+*2.2.4 added persist

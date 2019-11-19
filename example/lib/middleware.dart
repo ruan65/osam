@@ -1,9 +1,9 @@
 import 'package:example/main.dart';
-import 'package:example/state.dart';
+import 'package:example/state/state.dart';
+import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/domain/store/store.dart';
-import 'package:osam/util/event.dart';
 
 class MyMiddleware<S extends Store<AppState>> extends Middleware<S> {
   bool isIncrement(Event<BaseState> event) {
