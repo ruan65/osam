@@ -13,7 +13,7 @@ class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider.value(
       value: store,
-      child: child,
+      child: _LifecycleWrapper<S>(child: child),
     );
   }
 
@@ -22,7 +22,9 @@ class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
 
 // ignore: must_be_immutable
 class _LifecycleWrapper<S extends Store<BaseState>> extends StatefulWidget {
-  Widget child;
+  final Widget child;
+
+  const _LifecycleWrapper({Key key, this.child}) : super(key: key);
   @override
   _LifecycleWrapperState createState() => _LifecycleWrapperState<S>();
 }

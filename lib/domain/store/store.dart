@@ -75,7 +75,6 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
       if (event is ModificationEvent) {
         try {
           event(appState, event.bundle);
-          storeState();
         } catch (e) {
           print(e);
         }
