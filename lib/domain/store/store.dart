@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:osam/data/persist_repository.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
-import 'package:path_provider/path_provider.dart';
 
 const hiveAdaptersLimit = 223;
 
@@ -22,7 +20,7 @@ abstract class Store<ST extends BaseState<ST>> {
 
   Stream<Event<ST>> get eventStream;
 
-  Future<void> initPersist({@required List<TypeAdapter> adapters});
+  Future<void> initPersist();
 
   void storeState();
 
@@ -50,14 +48,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   }
 
   @override
-  Future<void> initPersist({@required List<TypeAdapter> adapters}) async {
-    assert(adapters.length < hiveAdaptersLimit);
-    Hive.init((await getApplicationDocumentsDirectory()).path);
-    var hiveTypeNumber = 0;
-    adapters.forEach((adapter) {
-      Hive.registerAdapter(adapter, hiveTypeNumber);
-      hiveTypeNumber++;
-    });
+  Future<void> initPersist() async {
     await PersistRepository().init();
     this.appState = PersistRepository().restoreState() ?? this.appState;
   }
@@ -84,7 +75,6 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
       if (event is ModificationEvent) {
         try {
           event(appState, event.bundle);
-          storeState();
         } catch (e) {
           print(e);
         }
