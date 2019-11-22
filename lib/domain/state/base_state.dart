@@ -28,6 +28,10 @@ abstract class BaseState<ST> extends Equatable {
         }
       })).propertyStream;
 
+  /// Hive restoring workaround
+  /// don't call this method only in hive adapters
+  void refreshHashcode() => _lastKnownHashCode = this.hashCode;
+
   @protected
   void _init() => _stateBroadcaster = StreamController<ST>.broadcast();
 

@@ -6,8 +6,6 @@ import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 
-const hiveAdaptersLimit = 223;
-
 abstract class Store<ST extends BaseState<ST>> {
   ST get state;
 

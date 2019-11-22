@@ -1,4 +1,4 @@
-## [2.1.1] - 19 nov 2019 20.31
+## [2.3.0] - 22 nov 2019 8.22
 
 *0.0.1 start osam ent
 
@@ -21,3 +21,7 @@
 *2.0.1 added null safety calls
 
 *2.2.4 added persist
+
+*2.2.9 chained persist with lifecycle
+
+*2.3.0 added hive restoring workaround
