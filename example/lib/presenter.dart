@@ -12,7 +12,6 @@ class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
   @override
   void init() {
     modelBroadcaster = StreamController<int>();
-    store.nextState.listen((data) {});
   }
 
   void increment() =>
