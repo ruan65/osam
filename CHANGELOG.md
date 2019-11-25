@@ -1,4 +1,4 @@
-## [2.3.0] - 22 nov 2019 8.22
+## [2.3.3] - 25 nov 2019 20.50
 
 *0.0.1 start osam ent
 
@@ -25,3 +25,7 @@
 *2.2.9 chained persist with lifecycle
 
 *2.3.0 added hive restoring workaround
+ 
+*2.3.2 downgraded equatable
+
+*2.3.3 updated equatable
