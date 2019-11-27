@@ -14,7 +14,7 @@ class PresenterProvider<S extends Store<BaseState>, P extends Presenter> extends
   Widget build(BuildContext context) {
     final store = StoreProvider.of<S>(context);
     return Provider(
-      builder: (ctx) => presenter
+      create: (ctx) => presenter
         ..store = store
         ..init(),
       child: child,
