@@ -13,7 +13,7 @@ void main() async {
   Hive.registerAdapter(SubStateAdapter(), 1);
   final store = Store(AppState());
   await store.initPersist();
-  store.wipePersist();
+  store.restoreState();
   runApp(MyApp(
     store: store,
   ));
@@ -64,7 +64,7 @@ class MyHomePage extends StatelessWidget {
 class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final presenter = PresenterProvider.of<ExamplePresenter<Store<AppState>>>(context);
+    final presenter = PresenterProvider.of<ExamplePresenter>(context);
     return FloatingActionButton(
       onPressed: () {
         presenter.increment();

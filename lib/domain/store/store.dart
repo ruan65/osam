@@ -23,6 +23,8 @@ abstract class Store<ST extends BaseState<ST>> {
   void storeState();
 
   void wipePersist();
+
+  void restoreState();
 }
 
 class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
@@ -46,10 +48,10 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   }
 
   @override
-  Future<void> initPersist() async {
-    await PersistRepository().init();
-    this.appState = PersistRepository().restoreState() ?? this.appState;
-  }
+  Future<void> initPersist() async => await PersistRepository().init();
+
+  @override
+  void restoreState() => this.appState = PersistRepository().restoreState() ?? this.appState;
 
   @override
   void storeState() => PersistRepository().storeState(appState);
@@ -74,7 +76,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
         try {
           event(appState, event.bundle);
         } catch (e) {
-          print(e);
+          print('store error while reducer calling: $e');
         }
       }
     });
