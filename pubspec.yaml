@@ -1,7 +1,7 @@
 name: osam
 description: State management library inspired redux, bloc and SOLID prenciples. It is null safety and very stable
   solution to avoid red screens and bad code.
-version: 2.3.5
+version: 2.3.6
 author: Daniil Surnin <dsrenesanse@gmail.com>
 homepage: https://github.com/Renesanse/osam
 
@@ -20,6 +20,8 @@ dependencies:
 
 dev_dependencies:
   hive_generator:
+    git:
+      url: https://github.com/Renesanse/hive_generator.git
   build_runner:
   flutter_test:
     sdk: flutter

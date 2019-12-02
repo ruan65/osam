@@ -217,9 +217,11 @@ packages:
   hive_generator:
     dependency: "direct dev"
     description:
-      name: hive_generator
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "104ec40b7033945c3e5812c43f02b6c44788bd80"
+      url: "https://github.com/Renesanse/hive_generator.git"
+    source: git
     version: "0.5.2"
   html:
     dependency: transitive
