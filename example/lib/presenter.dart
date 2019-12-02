@@ -5,7 +5,7 @@ import 'package:osam/domain/store/store.dart';
 import 'package:osam/osam.dart';
 import 'package:osam/presentation/presenter.dart';
 
-class ExamplePresenter<S extends Store<AppState>> extends Presenter<S> {
+class ExamplePresenter extends Presenter<Store<AppState>> {
   StreamSubscription propertySub;
   StreamController<int> modelBroadcaster;
 

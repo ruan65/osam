@@ -27,8 +27,5 @@ class _PersistRepositoryImpl implements PersistRepository {
 
   BaseState restoreState() => _persist.get('appState');
 
-  Future<void> wipeState() async {
-    if (_persist == null) await init();
-    _persist.delete('appState');
-  }
+  void wipeState() => _persist.delete('appState');
 }
