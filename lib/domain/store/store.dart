@@ -1,66 +1,64 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:osam/data/persist_repository.dart';
+import 'package:osam/persist/persist_interface.dart';
+import 'package:osam/persist/persist_repository.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
 
-abstract class Store<ST extends BaseState<ST>> {
-  ST get state;
+abstract class Store<ST extends BaseState<ST>> implements Persist {
 
   factory Store(ST state, {List<Middleware<Store<BaseState<ST>>>> middleWares = const []}) =>
       _StoreImpl(appState: state, middleWares: middleWares);
 
+  ST get state;
   Stream<ST> get nextState;
+  Stream<Event<ST, Object>> get eventStream;
 
-  void dispatchEvent({@required Event<ST> event});
+  void dispatchEvent<BT extends Object>({@required Event<ST, BT> event});
 
-  Stream<Event<ST>> get eventStream;
-
-  Future<void> initPersist();
-
-  void storeState();
-
-  void wipePersist();
-
-  void restoreState();
 }
 
 class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
+
   ST appState;
-
-  @override
-  ST get state => appState;
-
   final List<Middleware<Store<BaseState<ST>>>> middleWares;
-
-  // ignore: close_sinks
-  StreamController<Event<ST>> _dispatcher;
-
-  @override
-  Stream<Event<ST>> get eventStream => _dispatcher.stream;
-
   final _denormalizedConditions = <Condition>[];
+  // ignore: close_sinks
+  StreamController<Event<ST, Object>> _dispatcher;
 
   _StoreImpl({this.appState, this.middleWares}) {
     _initStore();
   }
 
   @override
+  ST get state => appState;
+
+  @override
+  Stream<ST> get nextState => appState.stateStream;
+
+  @override
+  Stream<Event<ST, Object>> get eventStream => _dispatcher.stream;
+
+  @override
   Future<void> initPersist() async => await PersistRepository().init();
 
   @override
-  void restoreState() => this.appState = PersistRepository().restoreState() ?? this.appState;
+  void dispatchEvent<BT extends Object>({@required Event<ST, BT> event}) => _dispatcher.sink.add(event);
 
   @override
   void storeState() => PersistRepository().storeState(appState);
 
   @override
-  void wipePersist() => PersistRepository().wipeState();
+  void restoreState() => this.appState = PersistRepository().restoreState() ?? this.appState;
+
+  @override
+  void deleteState() => PersistRepository().deleteState();
+
 
   void _initStore() {
-    _dispatcher = StreamController<Event<ST>>.broadcast();
+    _dispatcher = StreamController<Event<ST, Object>>.broadcast();
     middleWares.forEach((middleWares) => middleWares.store = this);
     _denormalizedConditions
         .addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
@@ -81,10 +79,4 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
       }
     });
   }
-
-  @override
-  Stream<ST> get nextState => appState.stateStream;
-
-  @override
-  void dispatchEvent({@required Event<ST> event}) => _dispatcher.sink.add(event);
 }
