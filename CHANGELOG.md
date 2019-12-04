@@ -1,4 +1,4 @@
-## [2.3.3] - 25 nov 2019 20.50
+## [2.4.0] - 3 dec 2019 16.10
 
 *0.0.1 start osam ent
 
@@ -29,3 +29,9 @@
 *2.3.2 downgraded equatable
 
 *2.3.3 updated equatable
+
+*2.3.7 added generic type for event
+
+*2.3.9 removed generic type for event
+
+*2.4.0 added persist check

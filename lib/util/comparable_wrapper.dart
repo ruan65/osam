@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+// Uses to compare two objects and calculate "good" hash
 class ComparableWrapper extends Equatable {
   final Object property;
 

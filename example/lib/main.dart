@@ -1,3 +1,4 @@
+import 'package:example/middleware.dart';
 import 'package:example/presenter.dart';
 import 'package:example/state/state.dart';
 import 'package:example/subState.dart';
@@ -11,9 +12,9 @@ void main() async {
   Hive.init((await getApplicationDocumentsDirectory()).path);
   Hive.registerAdapter(AppStateAdapter(), 0);
   Hive.registerAdapter(SubStateAdapter(), 1);
-  final store = Store(AppState());
-  await store.initPersist();
-  store.restoreState();
+  final store = Store(AppState(), middleWares: [MyMiddleware()]);
+  //await store.initPersist();
+ // store.restoreState();
   runApp(MyApp(
     store: store,
   ));
