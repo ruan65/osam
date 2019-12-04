@@ -15,9 +15,9 @@ abstract class Store<ST extends BaseState<ST>> implements Persist {
 
   Stream<ST> get nextState;
 
-  Stream<Event<ST, Object>> get eventStream;
+  Stream<Event<ST>> get eventStream;
 
-  void dispatchEvent<BT extends Object>({@required Event<ST, BT> event});
+  void dispatchEvent<BT extends Object>({@required Event<ST> event});
 }
 
 class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
@@ -27,7 +27,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   final bool logging;
 
   // ignore: close_sinks
-  StreamController<Event<ST, Object>> _dispatcher;
+  StreamController<Event<ST>> _dispatcher;
 
   _StoreImpl({this.appState, this.middleWares, this.logging}) {
     _initStore();
@@ -40,13 +40,13 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   Stream<ST> get nextState => appState.stateStream;
 
   @override
-  Stream<Event<ST, Object>> get eventStream => _dispatcher.stream;
+  Stream<Event<ST>> get eventStream => _dispatcher.stream;
 
   @override
   Future<void> initPersist() async => await PersistRepository().init();
 
   @override
-  void dispatchEvent<BT extends Object>({@required Event<ST, BT> event}) => _dispatcher.sink.add(event);
+  void dispatchEvent<BT extends Object>({@required Event<ST> event}) => _dispatcher.sink.add(event);
 
   @override
   void storeState() => PersistRepository().storeState(appState);
@@ -58,7 +58,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   void deleteState() => PersistRepository().deleteState();
 
   void _initStore() {
-    _dispatcher = StreamController<Event<ST, Object>>.broadcast();
+    _dispatcher = StreamController<Event<ST>>.broadcast();
     middleWares.forEach((middleWares) => middleWares.store = this);
     _denormalizedConditions.addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
     _dispatcher.stream.listen((event) {

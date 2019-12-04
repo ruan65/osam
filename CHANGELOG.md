@@ -31,3 +31,5 @@
 *2.3.3 updated equatable
 
 *2.3.7 added generic type for event
+
+*2.3.9 removed generic type for event

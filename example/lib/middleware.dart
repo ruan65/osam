@@ -6,7 +6,7 @@ import 'package:osam/domain/store/store.dart';
 
 class MyMiddleware extends Middleware<Store<AppState>> {
   bool isIncrement(Event event) {
-    if (event.type == EventType.increment && event is Event<AppState, int>) {
+    if (event.type == EventType.increment) {
       Future.delayed(Duration(seconds: 1), () {
         store.dispatchEvent<int>(
             event: Event.modify(
