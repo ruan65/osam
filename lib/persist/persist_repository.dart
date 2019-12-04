@@ -12,6 +12,8 @@ abstract class PersistRepository {
   BaseState restoreState();
 
   void deleteState();
+
+  bool get isEnabled;
 }
 
 class _PersistRepositoryImpl implements PersistRepository {
@@ -46,4 +48,7 @@ class _PersistRepositoryImpl implements PersistRepository {
       debugPrint('insure you called initPersist from your store in main');
     _persist.delete('appState');
   }
+
+  @override
+  bool get isEnabled => _persist == null ? false : true;
 }

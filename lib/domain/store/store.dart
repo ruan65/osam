@@ -13,6 +13,8 @@ abstract class Store<ST extends BaseState<ST>> implements Persist {
 
   ST get state;
 
+  bool get isPersistEnabled;
+
   Stream<ST> get nextState;
 
   Stream<Event<ST>> get eventStream;
@@ -35,6 +37,9 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
 
   @override
   ST get state => appState;
+
+  @override
+  bool get isPersistEnabled => PersistRepository().isEnabled;
 
   @override
   Stream<ST> get nextState => appState.stateStream;
@@ -82,4 +87,6 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
       }
     });
   }
+
+
 }
