@@ -4,16 +4,25 @@ import 'package:provider/provider.dart';
 
 import 'presenter.dart';
 
-class PresenterProvider<S extends Store<BaseState>, P extends Presenter> extends StatelessWidget {
+
+class PresenterProvider<S extends Store<BaseState>, P extends Presenter>
+    extends StatelessWidget {
   final P presenter;
   final Widget child;
-  const PresenterProvider({@required Key key, @required this.presenter, @required this.child})
+
+  const PresenterProvider(
+      {@required Key key, @required this.presenter, @required this.child})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final store = StoreProvider.of<S>(context);
+    assert(store != null);
+    if (store == null)
+      debugPrint(
+          'insure you provided store by StoreProvider in the start of your widget tree');
     return Provider(
+      key: ValueKey('PresenterProvider: %${key.toString()}'),
       create: (ctx) => presenter
         ..store = store
         ..init(),
@@ -22,5 +31,6 @@ class PresenterProvider<S extends Store<BaseState>, P extends Presenter> extends
     );
   }
 
-  static P of<P extends Presenter>(BuildContext context) => Provider.of<P>(context);
+  static P of<P extends Presenter>(BuildContext context) =>
+      Provider.of<P>(context);
 }
