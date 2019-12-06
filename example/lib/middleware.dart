@@ -9,9 +9,9 @@ class MyMiddleware extends Middleware<Store<AppState>> {
   bool isIncrement(Event<BaseState> event) {
     if (event.type == EventType.increment) {
       Future.delayed(Duration(seconds: 1), () {
-        store.dispatchEvent(
-            event: Event.modify(
-                reducer: (state, _) => state..increment(1), type: EventType.increment));
+//        store.dispatchEvent(
+//            event: Event.modify(
+//                reducer: (state, _) => state..increment(1), type: EventType.increment));
       });
     }
     return nextEvent(true);
