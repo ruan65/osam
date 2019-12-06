@@ -212,7 +212,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "104ec40b7033945c3e5812c43f02b6c44788bd80"
+      resolved-ref: "7a3eef04a084e9927e55b59a15afbeff222d44b4"
       url: "https://github.com/Renesanse/hive_generator.git"
     source: git
     version: "0.5.2"

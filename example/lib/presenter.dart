@@ -1,30 +1,25 @@
 import 'dart:async';
 
-import 'package:example/main.dart';
 import 'package:example/state/state.dart';
 import 'package:osam/domain/store/store.dart';
 import 'package:osam/osam.dart';
 import 'package:osam/presentation/presenter.dart';
 
 class ExamplePresenter extends Presenter<Store<AppState>> {
-  StreamSubscription propertySub;
-  StreamController<int> modelBroadcaster;
+  StreamSubscription<Place> propertySub;
+  StreamController<Place> modelBroadcaster;
 
   @override
   void init() {
-    modelBroadcaster = StreamController<int>();
+    modelBroadcaster = StreamController<Place>();
   }
 
-  void increment() => store.dispatchEvent<int>(
-      event: Event.modify(
-          reducer: (state, bundle) => state..increment(bundle),
-          type: EventType.increment,
-          bundle: 3));
+  void increment(Place place) =>
+      store.dispatchEvent(event: Event.modify(reducer: (state, _) => state..changePlace(place)));
 
-  int get initialData => store.state.count;
+  Place get initialData => store.state.place;
 
-  Stream<int> get stream =>
-      store.state.propertyStream<int>((state) => state.list.length);
+  Stream<Place> get stream => store.state.propertyStream<Place>((state) => state.place);
 
   @override
   void dispose() {
