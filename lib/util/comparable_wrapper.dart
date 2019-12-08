@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
 // Uses to compare two objects and calculate "good" hash
-class ComparableWrapper extends Equatable {
-  final Object property;
+class ComparableWrapper<P> extends Equatable {
+  final P property;
 
   ComparableWrapper(this.property);
 
   @override
-  List<Object> get props => [property];
+  List<P> get props => [property];
 }

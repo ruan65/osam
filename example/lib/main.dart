@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:example/middleware.dart';
 import 'package:example/presenter.dart';
 import 'package:example/state/state.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,7 @@ import 'package:osam/osam.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //Hive.init((await getApplicationDocumentsDirectory()).path);
-
-  final store = Store(AppState());
-  //await store.initPersist();
-  //store.restoreState();
+  final store = Store(AppState(), middleWares: [MyMiddleware()]);
   runApp(MyApp(
     store: store,
   ));
@@ -60,28 +55,18 @@ class MyHomePage extends StatelessWidget {
 }
 
 class Button extends StatelessWidget {
-  var index = 0;
-  final places = [
-    Place(address: Address(name: 'name', description: 'somethere'), location: Point(1, 2)),
-    Place(address: Address(name: 'name', description: 'somethere1'), location: Point(1, 2)),
-    Place(address: Address(name: 'name', description: 'somethere'), location: Point(1, 3))
-  ];
-
   @override
   Widget build(BuildContext context) {
     final presenter = PresenterProvider.of<ExamplePresenter>(context);
     return FloatingActionButton(
       onPressed: () {
-        presenter.increment(places[index]);
-        index++;
-        if (index == 3) index = 0;
+        presenter.increment();
       },
       child: StreamBuilder(
         initialData: presenter.initialData,
         stream: presenter.stream,
-        builder: (ctx, AsyncSnapshot<Place> snapshot) {
-          print('place changed');
-          return Text(snapshot.data.hashCode.toString());
+        builder: (ctx, AsyncSnapshot<int> snapshot) {
+          return Text(snapshot.data.toString());
         },
       ),
     );
