@@ -1,4 +1,3 @@
-import 'package:example/event.dart';
 import 'package:example/state/state.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
@@ -16,4 +15,11 @@ class MyMiddleware extends Middleware<Store<AppState>> {
 
   @override
   List<Condition> get conditions => [isIncrement];
+}
+
+class IncrementEvent extends ModificationEvent<AppState, int> {
+  IncrementEvent({int bundle});
+
+  @override
+  get reducer => (AppState state, int bundle) => state..increment();
 }

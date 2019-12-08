@@ -1,19 +1,23 @@
-import 'package:osam/osam.dart';
+import 'package:flutter/foundation.dart';
+import 'package:osam/domain/state/base_state.dart';
 
-abstract class Reducer<ST extends BaseState<ST>, I extends Object> {
-  BaseState reducer(ST state, I bundle);
+typedef BaseState Reducer<ST extends BaseState<ST>, B extends Object>(ST state, B bundle);
+
+abstract class Event<ST extends BaseState<ST>, B extends Object> {
+  B bundle;
+  Event({this.bundle});
+
+  factory Event.modify({B bundle, @required Reducer<ST, B> reducer}) =>
+      ModificationEvent<ST, B>(bundle: bundle, reducer: reducer);
+
+  void call(ST state, B bundle);
 }
 
-class Event {}
+class ModificationEvent<ST extends BaseState<ST>, B extends Object> extends Event<ST, B> {
+  final B bundle;
+  final Reducer<ST, B> reducer;
 
-abstract class ModificationEvent<ST extends BaseState<ST>, I extends Object> extends Event
-    implements Reducer<ST, I> {
-  I bundle;
+  ModificationEvent({this.bundle, this.reducer});
 
-  ModificationEvent({this.bundle});
-}
-
-abstract class SideEffectEvent<I extends Object> extends Event {
-  I bundle;
-  SideEffectEvent({this.bundle});
+  void call(ST state, Object bundle) => reducer(state, bundle).update();
 }

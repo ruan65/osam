@@ -5,7 +5,7 @@ import 'package:osam/domain/store/store.dart';
 import 'package:osam/osam.dart';
 import 'package:osam/presentation/presenter.dart';
 
-import 'event.dart';
+import 'middleware.dart';
 
 class ExamplePresenter extends Presenter<Store<AppState>> {
   StreamSubscription<int> propertySub;
