@@ -1,4 +1,4 @@
-import 'package:example/MyEvent.dart';
+import 'package:example/event.dart';
 import 'package:example/state/state.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';

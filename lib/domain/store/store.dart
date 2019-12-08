@@ -18,9 +18,9 @@ abstract class Store<ST extends BaseState<ST>> implements Persist {
 
   Stream<ST> get nextState;
 
-  Stream<Event<ST, Object>> get eventStream;
+  Stream<Event> get eventStream;
 
-  void dispatchEvent({@required Event<ST, Object> event});
+  void dispatchEvent({@required Event event});
 }
 
 class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
@@ -30,7 +30,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   final bool logging;
 
   // ignore: close_sinks
-  StreamController<Event<ST, Object>> _dispatcher;
+  StreamController<Event> _dispatcher;
 
   _StoreImpl({this.appState, this.middleWares, this.logging}) {
     _initStore();
@@ -46,13 +46,13 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   Stream<ST> get nextState => appState.stateStream;
 
   @override
-  Stream<Event<ST, Object>> get eventStream => _dispatcher.stream;
+  Stream<Event> get eventStream => _dispatcher.stream;
 
   @override
   Future<void> initPersist() async => await PersistRepository().init();
 
   @override
-  void dispatchEvent({@required Event<ST, Object> event}) => _dispatcher.sink.add(event);
+  void dispatchEvent({@required Event event}) => _dispatcher.sink.add(event);
 
   @override
   void storeState() => PersistRepository().storeState(appState);
@@ -64,7 +64,7 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   void deleteState() => PersistRepository().deleteState();
 
   void _initStore() {
-    _dispatcher = StreamController<Event<ST, Object>>.broadcast();
+    _dispatcher = StreamController<Event>.broadcast();
     middleWares.forEach((middleWares) => middleWares.store = this);
     _denormalizedConditions
         .addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
@@ -79,10 +79,12 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
       if (logging)
         debugPrint(
             'Event in stores event stream is : ${'runtimeType: ' + event.runtimeType.toString()}');
-      try {
-        event.reducer(appState, event.bundle).update();
-      } catch (e) {
-        print('store error while reducer calling: $e');
+      if (event is ModificationEvent<ST, Object>) {
+        try {
+          event.reducer(appState, event.bundle).update();
+        } catch (e) {
+          print('store error while reducer calling: $e');
+        }
       }
     });
   }
