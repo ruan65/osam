@@ -7,9 +7,9 @@ abstract class PersistRepository {
 
   Future<void> init();
 
-  void storeState(BaseState appState);
+  void storeState<ST extends BaseState>(ST appState);
 
-  BaseState restoreState();
+  ST restoreState<ST extends BaseState>();
 
   void deleteState();
 
@@ -19,8 +19,7 @@ abstract class PersistRepository {
 class _PersistRepositoryImpl implements PersistRepository {
   Box<BaseState> _persist;
 
-  static final PersistRepository _singleton =
-      _PersistRepositoryImpl._internal();
+  static final PersistRepository _singleton = _PersistRepositoryImpl._internal();
 
   factory _PersistRepositoryImpl() => _singleton;
 
@@ -28,24 +27,21 @@ class _PersistRepositoryImpl implements PersistRepository {
 
   Future<void> init() async => _persist ??= await Hive.openBox('persist');
 
-  void storeState(BaseState appState) {
+  void storeState<ST extends BaseState>(ST appState) {
     assert(_persist = null);
-    if (_persist == null)
-      debugPrint('insure you called initPersist from your store in main');
+    if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     _persist.put('appState', appState);
   }
 
-  BaseState restoreState() {
+  ST restoreState<ST extends BaseState>() {
     assert(_persist = null);
-    if (_persist == null)
-      debugPrint('insure you called initPersist from your store in main');
+    if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     return _persist.get('appState');
   }
 
   void deleteState() {
     assert(_persist = null);
-    if (_persist == null)
-      debugPrint('insure you called initPersist from your store in main');
+    if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     _persist.delete('appState');
   }
 

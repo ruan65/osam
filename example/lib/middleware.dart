@@ -1,17 +1,14 @@
-import 'package:example/main.dart';
+import 'package:example/MyEvent.dart';
 import 'package:example/state/state.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
-import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/domain/store/store.dart';
 
 class MyMiddleware extends Middleware<Store<AppState>> {
-  bool isIncrement(Event<BaseState> event) {
-    if (event.type == EventType.increment) {
+  bool isIncrement(Event event) {
+    if (event is IncrementEvent) {
       Future.delayed(Duration(seconds: 1), () {
-//        store.dispatchEvent(
-//            event: Event.modify(
-//                reducer: (state, _) => state..increment(1), type: EventType.increment));
+        store.dispatchEvent(event: IncrementEvent());
       });
     }
     return nextEvent(true);

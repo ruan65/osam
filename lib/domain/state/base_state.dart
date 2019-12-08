@@ -17,7 +17,6 @@ abstract class BaseState<ST> extends Equatable {
 
   StreamController<ST> _stateBroadcaster = StreamController<ST>.broadcast();
   Stream<ST> get stateStream => _stateBroadcaster.stream.map((state) => state);
-
   Stream<V> propertyStream<V>(ValueMapper<ST, V> mapper) =>
       _PropertyStream<V>(stateStream.map<V>((state) {
         try {

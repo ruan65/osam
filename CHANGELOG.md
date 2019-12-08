@@ -1,4 +1,4 @@
-## [2.4.0] - 3 dec 2019 16.10
+## [2.4.1] - 8 dec 2019 3.51
 
 *0.0.1 start osam ent
 
@@ -35,3 +35,5 @@
 *2.3.9 removed generic type for event
 
 *2.4.0 added persist check
+
+*2.4.1 changed Event for Middleware

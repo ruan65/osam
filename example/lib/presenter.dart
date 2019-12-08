@@ -5,21 +5,22 @@ import 'package:osam/domain/store/store.dart';
 import 'package:osam/osam.dart';
 import 'package:osam/presentation/presenter.dart';
 
+import 'MyEvent.dart';
+
 class ExamplePresenter extends Presenter<Store<AppState>> {
-  StreamSubscription<Place> propertySub;
-  StreamController<Place> modelBroadcaster;
+  StreamSubscription<int> propertySub;
+  StreamController<int> modelBroadcaster;
 
   @override
   void init() {
-    modelBroadcaster = StreamController<Place>();
+    modelBroadcaster = StreamController<int>();
   }
 
-  void increment(Place place) =>
-      store.dispatchEvent(event: Event.modify(reducer: (state, _) => state..changePlace(place)));
+  void increment() => store.dispatchEvent(event: IncrementEvent());
 
-  Place get initialData => store.state.place;
+  int get initialData => store.state.counter;
 
-  Stream<Place> get stream => store.state.propertyStream<Place>((state) => state.place);
+  Stream<int> get stream => store.state.propertyStream<int>((state) => state.counter);
 
   @override
   void dispose() {
