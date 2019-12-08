@@ -1,7 +1,7 @@
 import 'package:osam/osam.dart';
 
 abstract class Reducer<ST extends BaseState<ST>, I extends Object> {
-  ST reducer(ST state, I bundle);
+  BaseState reducer(ST state, I bundle);
 }
 
 class Event {}
