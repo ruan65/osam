@@ -10,7 +10,6 @@ abstract class Event<ST extends BaseState<ST>, B extends Object> {
   factory Event.modify({B bundle, @required Reducer<ST, B> reducer}) =>
       ModificationEvent<ST, B>(bundle: bundle, reducer: reducer);
 
-  void call(ST state, B bundle);
 }
 
 class ModificationEvent<ST extends BaseState<ST>, B extends Object> extends Event<ST, B> {
