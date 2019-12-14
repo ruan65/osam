@@ -32,6 +32,6 @@ class _LifecycleWrapperState<S extends Store<BaseState>> extends State<Lifecycle
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    StoreProvider.of<S>(context).storeState();
+    InternalStoreProvider.of(context).store.storeState();
   }
 }

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'presenter.dart';
 
 
-class PresenterProvider<S extends Store<BaseState>, P extends Presenter>
+class PresenterProvider<P extends Presenter>
     extends StatelessWidget {
   final P presenter;
   final Widget child;
@@ -16,7 +16,7 @@ class PresenterProvider<S extends Store<BaseState>, P extends Presenter>
 
   @override
   Widget build(BuildContext context) {
-    final store = StoreProvider.of<S>(context);
+    final store = InternalStoreProvider.of(context).store;
     assert(store != null);
     if (store == null)
       debugPrint(
