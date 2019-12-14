@@ -28,19 +28,16 @@ class _PersistRepositoryImpl implements PersistRepository {
   Future<void> init() async => _persist ??= await Hive.openBox('persist');
 
   void storeState<ST extends BaseState>(ST appState) {
-    assert(_persist = null);
     if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     _persist.put('appState', appState);
   }
 
   ST restoreState<ST extends BaseState>() {
-    assert(_persist = null);
     if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     return _persist.get('appState');
   }
 
   void deleteState() {
-    assert(_persist = null);
     if (_persist == null) debugPrint('insure you called initPersist from your store in main');
     _persist.delete('appState');
   }
