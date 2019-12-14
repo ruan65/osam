@@ -10,17 +10,54 @@ This is state management implements best solutions of Redux, Bloc, Provider and 
 
 `State` - is a class that contains data like primitives, collections and other states.
 
-`Event` - is a parent class for `ModificationEvent` and `SideEffectEvent` that can contains "bundle" (payload).
+`Event` - is a parent class for `ModificationEvent` that can contains "bundle" (payload).
 
 `ModificationEvent` - is Event that implements `Reducer` to modify `State` of application.
-
-`SideEffectEvent` - is Event to handle with "side effect" (BD, API ... requests) in `Middleware`'s.
 
 `Reducer` - is a method in `ModificationEvent` that calls method of target `State` and returns it.
 
 `Middleware` - is a class that working between sending event and calling it's `Reducer` and contains `Conditin`'s to
  add and handle with your business logic.
  
+ ## Notice
+ 
+ - To catch your custom event in middleware, just create your own Event by extending `Event` or `ModificationEvent`.
+ 
+ Example:
+ 
+ - [ModificationEvent]
+```dart
+class IncrementEvent extends ModificationEvent<AppState, int> {
+  IncrementEvent({int bundle});
+
+  @override
+  get reducer => (AppState state, int bundle) => state..increment();
+}
+```
+- [Event for handle some actions]
+
+```dart
+class SomeSideEffectEvent extends Event<AppState, void>{}
+```
+
+- [Middleware catching event]
+
+```dart
+class MyMiddleware extends Middleware<Store<AppState>> {
+  bool isIncrement(Event event) {
+    if (event is IncrementEvent) {
+      Future.delayed(Duration(seconds: 1), () {
+        store.dispatchEvent(event: IncrementEvent());
+      });
+    }
+    return nextEvent(true);
+  }
+
+  @override
+  List<Condition> get conditions => [isIncrement];
+}
+```
+
 - [Presentation layer]
 
 `StoreProvider` - is a wrapper of your entry point widget and `Store` to provide `Store` for all of `Presenter`'s using
@@ -44,7 +81,13 @@ This is state management implements best solutions of Redux, Bloc, Provider and 
 
 5) Use `Middlewares` for all of your business rules.
 
-6) "Recommendation" try to use worker_manager package to save your fps. https://pub.dev/packages/worker_manager
+6) To throw `Event` through all of `Middleware` conditions stack, you must return in all of conditions this call:
+
+```dart
+nextEvent(true); // or false if you wouldn't
+```
+
+7) "Recommendation" try to use worker_manager package to save your fps. https://pub.dev/packages/worker_manager
 
 - [Special features]
 
