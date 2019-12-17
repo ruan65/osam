@@ -10,7 +10,7 @@ class MyMiddleware extends Middleware<Store<AppState>> {
         store.dispatchEvent(event: IncrementEvent());
       });
     }
-    return nextEvent(true);
+    return nextEvent(false);
   }
 
   @override

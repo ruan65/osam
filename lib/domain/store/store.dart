@@ -8,8 +8,7 @@ import 'package:osam/persist/persist_interface.dart';
 import 'package:osam/persist/persist_repository.dart';
 
 abstract class Store<ST extends BaseState<ST>> implements Persist {
-  factory Store(ST state,
-          {List<Middleware<Store<BaseState<ST>>>> middleWares = const [], bool logging = false}) =>
+  factory Store(ST state, {List<Middleware<Store<BaseState<ST>>>> middleWares = const [], bool logging = false}) =>
       _StoreImpl(appState: state, middleWares: middleWares, logging: logging);
 
   ST get state;
@@ -61,19 +60,13 @@ class _StoreImpl<ST extends BaseState<ST>> implements Store<ST> {
   void _initStore() {
     _dispatcher = StreamController<Event<ST, Object>>.broadcast();
     middleWares.forEach((middleWares) => middleWares.store = this);
-    _denormalizedConditions
-        .addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
+    _denormalizedConditions.addAll(middleWares.expand((middleWare) => middleWare.conditions).toList());
     _dispatcher.stream.listen((event) {
       for (Condition condition in _denormalizedConditions) {
         final nextEvent = condition(event);
-        if (nextEvent)
-          continue;
-        else
-          break;
+        if (!nextEvent) return;
       }
-      if (logging)
-        debugPrint(
-            'Event in stores event stream is : ${'runtimeType: ' + event.runtimeType.toString()}');
+      if (logging) debugPrint('Event in stores event stream is : ${'runtimeType: ' + event.runtimeType.toString()}');
       if (event is ModificationEvent<ST, Object>) {
         try {
           event(appState, event.bundle);
