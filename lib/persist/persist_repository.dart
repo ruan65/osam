@@ -1,6 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:osam/domain/state/base_state.dart';
+import 'package:path_provider/path_provider.dart';
+
+
+abstract class Persist {
+  Future<void> initPersist();
+
+  void storeState();
+
+  void restoreState();
+
+  void deleteState();
+}
+
 
 abstract class PersistRepository {
   factory PersistRepository() => _PersistRepositoryImpl();
@@ -25,7 +38,10 @@ class _PersistRepositoryImpl implements PersistRepository {
 
   _PersistRepositoryImpl._internal();
 
-  Future<void> init() async => _persist ??= await Hive.openBox('persist');
+  Future<void> init() async {
+    Hive.init((await getApplicationDocumentsDirectory()).path);
+    _persist ??= await Hive.openBox('persist');
+  }
 
   void storeState<ST extends BaseState>(ST appState) {
     if (_persist == null) debugPrint('insure you called initPersist from your store in main');

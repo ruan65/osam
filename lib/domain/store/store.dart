@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:osam/domain/event/event.dart';
 import 'package:osam/domain/middleware/middleware.dart';
 import 'package:osam/domain/state/base_state.dart';
-import 'package:osam/persist/persist_interface.dart';
 import 'package:osam/persist/persist_repository.dart';
 
 abstract class Store<ST extends BaseState<ST>> implements Persist {

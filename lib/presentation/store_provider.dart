@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:osam/domain/state/base_state.dart';
 import 'package:osam/domain/store/store.dart';
-
 import 'life_cycle_wrapper.dart';
 
 class StoreProvider<S extends Store<BaseState>> extends StatelessWidget {
   final S store;
   final Widget child;
+  final lifecycleProviderKey = GlobalKey();
+  final storeProviderKey = GlobalKey();
 
-  const StoreProvider({Key key = const ValueKey('_store'), @required this.store, @required this.child}) : super(key: key);
+  StoreProvider({Key key, @required this.store, @required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InternalStoreProvider(
-        key: ValueKey('internal_store_provider'),
+        key: storeProviderKey,
         store: store,
         child: store.isPersistEnabled
-            ? LifecycleWrapper<S>(child: child, key: ValueKey('LifecycleWrapper: ${key.toString()}'))
+            ? LifecycleWrapper<S>(child: child, key: lifecycleProviderKey)
             : child);
   }
 }

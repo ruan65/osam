@@ -3,15 +3,13 @@ import 'package:example/presenter.dart';
 import 'package:example/state/state.dart';
 import 'package:flutter/material.dart';
 import 'package:osam/osam.dart';
-import 'package:osam/presentation/life_cycle_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final store = Store(AppState(), middleWares: [MyMiddleware()]);
-//  await store.initPersist();
-//  store.restoreState();
   runApp(MyApp(
     store: store,
+    key: GlobalKey(),
   ));
 }
 

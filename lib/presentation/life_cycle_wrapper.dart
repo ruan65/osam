@@ -13,6 +13,7 @@ class LifecycleWrapper<S extends Store<BaseState>> extends StatefulWidget {
 
 class _LifecycleWrapperState<S extends Store<BaseState>> extends State<LifecycleWrapper>
     with WidgetsBindingObserver {
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
